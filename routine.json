@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "title": "12주 피트니스 루틴",
+    "subtitle": "웨이트 + 유산소 + 스트레칭",
+    "totalWeeks": 12,
+    "sessionsPerWeek": 4
+  },
+  "phases": [
+    {
+      "id": "phase-1",
+      "label": "1~4주",
+      "title": "재적응 & 기초 구축",
+      "description": "6개월 공백 후 재시작 · 허리 안정화 우선 · 가동성 회복",
+      "accentColor": "#378ADD",
+      "note": "무게보다 자세 완성이 핵심. 허리 중립 자세 유지가 최우선. Zone2는 트레드밀 빠른 걷기(경사 2~3도)로도 충분해요.",
+      "schedule": [
+        { "day": "월", "title": "상체 A", "tags": ["웨이트 40분", "Zone2 15분", "스트레칭 10분"], "types": ["weight", "zone2", "stretch"] },
+        { "day": "화", "title": "하체 A", "tags": ["웨이트 40분", "Zone2 15분", "스트레칭 10분"], "types": ["weight", "zone2", "stretch"] },
+        { "day": "수", "title": "휴식", "tags": ["스트레칭 10분", "가벼운 걷기"], "types": ["stretch", "rest"], "isRest": true },
+        { "day": "목", "title": "상체 B", "tags": ["웨이트 40분", "Zone2 15분", "스트레칭 10분"], "types": ["weight", "zone2", "stretch"] },
+        { "day": "금", "title": "하체 B", "tags": ["웨이트 40분", "Zone2 15분", "스트레칭 10분"], "types": ["weight", "zone2", "stretch"] },
+        { "day": "토", "title": "휴식/액티브", "tags": ["스트레칭 15분", "산책"], "types": ["stretch", "rest"], "isRest": true }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "label": "5~8주",
+      "title": "볼륨 & 강도 증가",
+      "description": "인터벌 런 추가 · 무게 점진적 증가 · 유연성 가시적 변화 시작",
+      "accentColor": "#1D9E75",
+      "note": "인터벌은 사진 프로그램 Week 1~4 구간 적용. 상체 날은 인터벌, 하체 날은 Zone2로 다리 피로 관리.",
+      "schedule": [
+        { "day": "월", "title": "상체 A", "tags": ["웨이트 45분", "인터벌 15분", "스트레칭 10분"], "types": ["weight", "interval", "stretch"] },
+        { "day": "화", "title": "하체 A", "tags": ["웨이트 45분", "Zone2 15분", "스트레칭 10분"], "types": ["weight", "zone2", "stretch"] },
+        { "day": "수", "title": "휴식", "tags": ["스트레칭 10분"], "types": ["stretch"], "isRest": true },
+        { "day": "목", "title": "상체 B", "tags": ["웨이트 45분", "인터벌 15분", "스트레칭 10분"], "types": ["weight", "interval", "stretch"] },
+        { "day": "금", "title": "하체 B", "tags": ["웨이트 45분", "Zone2 15분", "스트레칭 10분"], "types": ["weight", "zone2", "stretch"] },
+        { "day": "토", "title": "휴식/액티브", "tags": ["스트레칭 15분"], "types": ["stretch"], "isRest": true }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "label": "9~12주",
+      "title": "심화 & 통합",
+      "description": "인터벌 강도 업 · 복합 동작 증가 · 11주차 디로드",
+      "accentColor": "#D85A30",
+      "note": "11주차 디로드: 무게 40% 감량, 세트 절반, Zone2만 유지. 12주차에 최고 퍼포먼스 끌어올리기.",
+      "schedule": [
+        { "day": "월", "title": "상체 A", "tags": ["웨이트 45분", "인터벌 20분", "스트레칭 10분"], "types": ["weight", "interval", "stretch"] },
+        { "day": "화", "title": "하체 A", "tags": ["웨이트 45분", "Zone2 20분", "스트레칭 10분"], "types": ["weight", "zone2", "stretch"] },
+        { "day": "수", "title": "휴식", "tags": ["스트레칭 10분"], "types": ["stretch"], "isRest": true },
+        { "day": "목", "title": "상체 B", "tags": ["웨이트 45분", "인터벌 20분", "스트레칭 10분"], "types": ["weight", "interval", "stretch"] },
+        { "day": "금", "title": "하체 B", "tags": ["웨이트 45분", "Zone2 20분", "스트레칭 10분"], "types": ["weight", "zone2", "stretch"] },
+        { "day": "토", "title": "휴식/액티브", "tags": ["스트레칭 15분"], "types": ["stretch"], "isRest": true }
+      ]
+    }
+  ],
+  "workouts": [
+    {
+      "id": "upper-a",
+      "label": "상체 A",
+      "dayLabel": "월 · 목",
+      "focus": "밀기 (가슴·어깨·삼두)",
+      "exercises": [
+        { "name": "인클라인 덤벨 프레스", "note": "30~45도 경사 · 어깨 보호", "sets": "4세트 × 10~12회" },
+        { "name": "케이블 체스트 플라이", "note": "서서 시행 · 허리 부담↓", "sets": "3세트 × 12~15회" },
+        { "name": "덤벨 숄더 프레스", "note": "시티드 · 허리 지지", "sets": "3세트 × 10~12회" },
+        { "name": "래터럴 레이즈", "note": "후면삼각근 밸런스", "sets": "3세트 × 15회" },
+        { "name": "케이블 트라이셉스 푸시다운", "note": "오버헤드 익스텐션 대신", "sets": "3세트 × 12~15회" }
+      ]
+    },
+    {
+      "id": "upper-b",
+      "label": "상체 B",
+      "dayLabel": "목",
+      "focus": "당기기 (등·이두)",
+      "exercises": [
+        { "name": "시티드 케이블 로우", "note": "허리 중립 필수 · 데드리프트 대신", "sets": "4세트 × 10~12회" },
+        { "name": "랫 풀다운", "note": "광배근 발달 · 풀업 준비", "sets": "4세트 × 10~12회" },
+        { "name": "덤벨 원암 로우", "note": "벤치에 무릎 지지 · 허리 안전", "sets": "3세트 × 12회 (양쪽)" },
+        { "name": "페이스 풀", "note": "후면 삼각근 · 회전근개 보호", "sets": "3세트 × 15회" },
+        { "name": "덤벨 해머 컬", "note": "이두 + 상완근", "sets": "3세트 × 12회" }
+      ]
+    },
+    {
+      "id": "lower-a",
+      "label": "하체 A",
+      "dayLabel": "화",
+      "focus": "쿼드 중심",
+      "exercises": [
+        { "name": "레그 프레스", "note": "스쿼트 대신 · 허리 부담↓", "sets": "4세트 × 10~12회" },
+        { "name": "덤벨 고블릿 스쿼트", "note": "허리 중립 잡기 쉬움 · 재적응에 최적", "sets": "3세트 × 12회" },
+        { "name": "레그 익스텐션", "note": "쿼드 고립 · 안전", "sets": "3세트 × 15회" },
+        { "name": "힙 어브덕션 머신", "note": "엉덩이 외전근 · 골반 안정", "sets": "3세트 × 15회" },
+        { "name": "카프 레이즈 (서서)", "note": "", "sets": "3세트 × 20회" }
+      ]
+    },
+    {
+      "id": "lower-b",
+      "label": "하체 B",
+      "dayLabel": "금",
+      "focus": "햄스트링·둔근 중심",
+      "exercises": [
+        { "name": "루마니안 데드리프트 (RDL)", "note": "햄스트링 스트레칭 + 강화 · 허리 중립", "sets": "4세트 × 10회" },
+        { "name": "힙 스러스트 (바벨 or 머신)", "note": "둔근 최고 활성화 동작", "sets": "4세트 × 12회" },
+        { "name": "레그 컬 (라잉 or 시티드)", "note": "햄스트링 고립", "sets": "3세트 × 12~15회" },
+        { "name": "덤벨 리버스 런지", "note": "무릎 부담 적은 런지 변형", "sets": "3세트 × 10회 (양쪽)" },
+        { "name": "글루트 브릿지 (맨몸)", "note": "허리 안정화 + 마무리", "sets": "2세트 × 20회" }
+      ]
+    }
+  ],
+  "cardio": {
+    "principle": "웨이트 후 유산소 순서 (글리코겐 소진 후 지방 연소↑)",
+    "zone2": {
+      "title": "Zone 2 (저강도)",
+      "description": "대화 가능한 속도 · 트레드밀 시속 5.5~6.5km + 경사 2~3도",
+      "heartRate": "심박 120~135 bpm 목표",
+      "days": "하체 날 (화·금)"
+    },
+    "interval": {
+      "title": "인터벌 런",
+      "description": "사진 프로그램 기반 점진적 구성",
+      "days": "상체 날 (월·목)",
+      "phases": [
+        { "weeks": "1~4주", "program": "Week 1 기준", "duration": "약 25분", "detail": "Run/Walk 반복" },
+        { "weeks": "5~8주", "program": "Week 3~5 기준", "duration": "약 28분", "detail": "런 구간 길어짐" },
+        { "weeks": "9~12주", "program": "Week 7~9 기준", "duration": "약 35분", "detail": "연속 런 증가" }
+      ]
+    }
+  },
+  "stretching": {
+    "dailyMinutes": 10,
+    "goal": "햄스트링 단축 해소 + 골반 전방경사 교정 + 허리 중립 회복",
+    "daily": [
+      { "name": "90/90 힙 스트레치", "desc": "양쪽 각 60초 · 골반 내·외회전 동시 · 허리 둥글게 말지 않기" },
+      { "name": "수건 보조 햄스트링 스트레칭", "desc": "누워서 한쪽 다리 들어 수건으로 당기기 · 양쪽 45초 × 2세트 · 무릎 살짝 구부려도 OK" },
+      { "name": "캣-카우 (고양이-소 자세)", "desc": "10회 × 2세트 · 허리 가동성 · 천천히 호흡과 함께" },
+      { "name": "데드버그", "desc": "10회 × 2세트 · 코어 안정화 · 허리가 바닥에서 떨어지지 않게" },
+      { "name": "차일드 포즈", "desc": "60초 · 허리 이완 · 마무리" }
+    ],
+    "lowerDayExtra": [
+      { "name": "코치 스트레치 (런지 + 흉추 회전)", "desc": "양쪽 각 45초 · 고관절 굴곡근 + 흉추 동시" },
+      { "name": "시티드 포워드 폴드", "desc": "허리 먼저 펴고 → 천천히 숙이기 · 60초 유지" }
+    ],
+    "timeline": [
+      { "week": "4주 후", "goal": "정강이 → 발목" },
+      { "week": "8주 후", "goal": "발목 → 발등" },
+      { "week": "12주 후", "goal": "발끝 도달" }
+    ]
+  },
+  "backCare": {
+    "avoid": [
+      { "name": "바벨 스쿼트", "replace": "고블릿 스쿼트 or 레그프레스로 대체", "level": "주의" },
+      { "name": "컨벤셔널 데드리프트", "replace": "RDL로 대체", "level": "주의" },
+      { "name": "굿모닝 운동", "replace": "허리 굴곡 과부하", "level": "금지" },
+      { "name": "풀 싯업", "replace": "플랭크·데드버그로 대체", "level": "금지" }
+    ],
+    "redFlags": [
+      "다리 저림·당김 느낌 → 신경 압박 가능성, 전문의 상담",
+      "운동 중 예리한 찌르는 통증 → 즉시 중단",
+      "다음 날 허리 통증이 이전보다 심해짐 → 볼륨·무게 줄이기"
+    ],
+    "tip": "운동 전 항상 데드버그 10회로 코어 활성화. 벨트는 1~4주간 사용 자제 (코어 강화 목적). 5주차부터 고중량 시에만 선택적 사용."
+  }
+}

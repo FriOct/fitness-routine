@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0f0f0f">
+<title>12주 피트니스 루틴</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #242424;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f0;
+    --muted: #888;
+    --hint: #555;
+    --blue: #4a9eff;
+    --blue-bg: rgba(74,158,255,0.1);
+    --green: #4ecb8d;
+    --green-bg: rgba(78,203,141,0.1);
+    --amber: #f5a623;
+    --amber-bg: rgba(245,166,35,0.1);
+    --coral: #ff6b4a;
+    --coral-bg: rgba(255,107,74,0.1);
+    --teal: #2dd4bf;
+    --teal-bg: rgba(45,212,191,0.1);
+    --r: 10px;
+    --r-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 15px; }
+  body {
+    font-family: -apple-system, 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* 헤더 */
+  .header {
+    padding: 20px 16px 0;
+    margin-bottom: 4px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 2px;
+  }
+  .header-sub { font-size: 13px; color: var(--muted); }
+
+  /* 탭 바 */
+  .tab-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 8px;
+    margin-top: 16px;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s;
+  }
+  .tab-btn.active {
+    color: var(--text);
+  }
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 14px; right: 14px;
+    height: 2px;
+    background: var(--blue);
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* 콘텐츠 */
+  .content { padding: 16px; display: none; }
+  .content.active { display: block; }
+
+  /* 페이즈 선택 */
+  .phase-pills {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .phase-pills::-webkit-scrollbar { display: none; }
+  .phase-pill {
+    flex-shrink: 0;
+    padding: 5px 12px;
+    border-radius: 99px;
+    border: 0.5px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .phase-pill.active {
+    background: var(--blue-bg);
+    color: var(--blue);
+    border-color: rgba(74,158,255,0.3);
+  }
+
+  /* 페이즈 헤더 */
+  .phase-header {
+    padding: 12px 14px;
+    background: var(--surface);
+    border-radius: var(--r);
+    border-left: 3px solid var(--blue);
+    margin-bottom: 14px;
+  }
+  .phase-header-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .phase-header-sub { font-size: 12px; color: var(--muted); }
+
+  /* 요일 카드 그리드 */
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .day-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--r);
+    padding: 10px;
+  }
+  .day-card.is-rest { opacity: 0.5; }
+  .day-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .day-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .tag-list { display: flex; flex-direction: column; gap: 3px; }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    width: fit-content;
+  }
+  .tag-weight { background: var(--blue-bg); color: var(--blue); }
+  .tag-zone2  { background: var(--teal-bg); color: var(--teal); }
+  .tag-interval { background: var(--green-bg); color: var(--green); }
+  .tag-stretch { background: var(--amber-bg); color: var(--amber); }
+  .tag-rest { background: rgba(255,255,255,0.05); color: var(--muted); }
+
+  /* 시간바 */
+  .time-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    border-radius: var(--r-sm);
+    overflow: hidden;
+  }
+  .time-seg {
+    padding: 7px 0;
+    font-size: 10px;
+    font-weight: 500;
+    text-align: center;
+    border-radius: var(--r-sm);
+  }
+  .ts-warmup { background: rgba(245,166,35,0.15); color: var(--amber); flex: 0.5; }
+  .ts-main   { background: var(--blue-bg); color: var(--blue); flex: 2.5; }
+  .ts-cardio { background: var(--teal-bg); color: var(--teal); flex: 1; }
+  .ts-stretch{ background: var(--amber-bg); color: var(--amber); flex: 0.8; }
+
+  /* 인포박스 */
+  .info-box {
+    background: var(--surface);
+    border-radius: var(--r);
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .info-box strong { color: var(--text); font-weight: 600; }
+
+  /* 운동 상세 */
+  .workout-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .workout-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--r);
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .workout-card.active {
+    background: var(--blue-bg);
+    border-color: rgba(74,158,255,0.4);
+  }
+  .workout-card-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .workout-card-title { font-size: 14px; font-weight: 600; }
+  .workout-card-focus { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .exercise-list { background: var(--surface); border-radius: var(--r); overflow: hidden; }
+  .exercise-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border-bottom: 0.5px solid var(--border);
+    gap: 8px;
+  }
+  .exercise-item:last-child { border-bottom: none; }
+  .ex-info { flex: 1; }
+  .ex-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .ex-note { font-size: 11px; color: var(--muted); }
+  .ex-sets { font-size: 12px; color: var(--blue); font-weight: 500; white-space: nowrap; }
+
+  /* 섹션 타이틀 */
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 18px 0 8px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* 스트레칭 */
+  .stretch-list { background: var(--surface); border-radius: var(--r); overflow: hidden; }
+  .stretch-item {
+    padding: 12px 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .stretch-item:last-child { border-bottom: none; }
+  .stretch-num {
+    display: inline-block;
+    width: 20px; height: 20px;
+    background: var(--amber-bg);
+    color: var(--amber);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    margin-bottom: 4px;
+  }
+  .stretch-name { font-size: 13px; font-weight: 500; }
+  .stretch-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+
+  .timeline-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-radius: var(--r-sm);
+    margin-bottom: 6px;
+  }
+  .timeline-week { font-size: 12px; color: var(--muted); min-width: 56px; }
+  .timeline-arrow { color: var(--hint); font-size: 12px; }
+  .timeline-goal { font-size: 13px; font-weight: 500; }
+
+  /* 허리 보호 */
+  .back-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .back-item:last-child { border-bottom: none; }
+  .level-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .level-주의 { background: rgba(245,166,35,0.15); color: var(--amber); }
+  .level-금지 { background: rgba(255,107,74,0.15); color: var(--coral); }
+  .back-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .back-replace { font-size: 12px; color: var(--muted); }
+
+  .red-flag-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .red-flag-item:last-child { border-bottom: none; }
+  .red-flag-dot {
+    width: 6px; height: 6px;
+    background: var(--coral);
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  /* 유산소 */
+  .cardio-block {
+    background: var(--surface);
+    border-radius: var(--r);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .cardio-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .cardio-day { font-size: 11px; font-weight: 500; margin-bottom: 8px; }
+  .cardio-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .interval-phase {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 13px;
+  }
+  .interval-phase:last-child { border-bottom: none; }
+  .interval-weeks { font-size: 12px; font-weight: 600; }
+  .interval-detail { font-size: 12px; color: var(--muted); }
+
+  /* 로딩 */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .error-box {
+    margin: 20px;
+    padding: 14px;
+    background: rgba(255,107,74,0.1);
+    border: 0.5px solid rgba(255,107,74,0.3);
+    border-radius: var(--r);
+    font-size: 13px;
+    color: var(--coral);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title" id="main-title">로딩 중...</div>
+  <div class="header-sub" id="main-sub"></div>
+</div>
+
+<div class="tab-bar" id="tab-bar"></div>
+
+<div id="tab-schedule" class="content"></div>
+<div id="tab-workout" class="content"></div>
+<div id="tab-cardio" class="content"></div>
+<div id="tab-stretch" class="content"></div>
+<div id="tab-back" class="content"></div>
+
+<script>
+const TABS = [
+  { id: 'schedule', label: '주간 스케줄' },
+  { id: 'workout',  label: '운동 상세' },
+  { id: 'cardio',   label: '유산소' },
+  { id: 'stretch',  label: '스트레칭' },
+  { id: 'back',     label: '허리 보호' },
+];
+
+let data = null;
+let activeTab = 'schedule';
+let activePhase = 0;
+let activeWorkout = 0;
+
+async function init() {
+  try {
+    const res = await fetch('routine.json');
+    if (!res.ok) throw new Error('파일을 불러올 수 없어요');
+    data = await res.json();
+    render();
+  } catch (e) {
+    document.body.innerHTML += `<div class="error-box">⚠️ routine.json 로드 실패<br>${e.message}<br><br>index.html과 routine.json이 같은 폴더에 있는지 확인해주세요.</div>`;
+  }
+}
+
+function render() {
+  document.getElementById('main-title').textContent = data.meta.title;
+  document.getElementById('main-sub').textContent = data.meta.subtitle;
+  renderTabs();
+  renderSchedule();
+  renderWorkout();
+  renderCardio();
+  renderStretch();
+  renderBack();
+  switchTab('schedule');
+}
+
+function renderTabs() {
+  const bar = document.getElementById('tab-bar');
+  bar.innerHTML = TABS.map(t =>
+    `<button class="tab-btn" onclick="switchTab('${t.id}')" id="tabbtn-${t.id}">${t.label}</button>`
+  ).join('');
+}
+
+function switchTab(id) {
+  activeTab = id;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  const btn = document.getElementById('tabbtn-' + id);
+  if (btn) btn.classList.add('active');
+  const content = document.getElementById('tab-' + id);
+  if (content) content.classList.add('active');
+}
+
+function renderSchedule() {
+  const el = document.getElementById('tab-schedule');
+  const phases = data.phases;
+
+  const pills = phases.map((p, i) =>
+    `<button class="phase-pill${i === 0 ? ' active' : ''}" id="pill-${i}" onclick="switchPhase(${i})">${p.label}</button>`
+  ).join('');
+
+  const phaseDivs = phases.map((p, i) => {
+    const dayCards = p.schedule.map(d => {
+      const tags = d.tags.map((t, j) => `<span class="tag tag-${d.types[j]}">${t}</span>`).join('');
+      return `<div class="day-card${d.isRest ? ' is-rest' : ''}">
+        <div class="day-label">${d.day}</div>
+        <div class="day-title">${d.title}</div>
+        <div class="tag-list">${tags}</div>
+      </div>`;
+    }).join('');
+
+    return `<div id="phase-div-${i}" style="display:${i===0?'block':'none'}">
+      <div class="phase-header" style="border-left-color:${p.accentColor}">
+        <div class="phase-header-title">${p.label} — ${p.title}</div>
+        <div class="phase-header-sub">${p.description}</div>
+      </div>
+      <div class="day-grid">${dayCards}</div>
+      <div class="time-bar">
+        <div class="time-seg ts-warmup">워밍업 5분</div>
+        <div class="time-seg ts-main">웨이트 ${i===0?'40':'45'}분</div>
+        <div class="time-seg ts-cardio">${i===0?'Zone2':'유산소'} ${i===2?'20':'15'}분</div>
+        <div class="time-seg ts-stretch">스트레칭 10분</div>
+      </div>
+      <div class="info-box"><strong>이 시기 핵심:</strong> ${p.note}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="phase-pills">${pills}</div>
+    ${phaseDivs}
+  `;
+}
+
+function switchPhase(i) {
+  activePhase = i;
+  document.querySelectorAll('.phase-pill').forEach((p, j) => {
+    p.classList.toggle('active', i === j);
+  });
+  document.querySelectorAll('[id^="phase-div-"]').forEach((d, j) => {
+    d.style.display = i === j ? 'block' : 'none';
+  });
+}
+
+function renderWorkout() {
+  const el = document.getElementById('tab-workout');
+  const workouts = data.workouts;
+
+  const cards = workouts.map((w, i) => `
+    <div class="workout-card${i===0?' active':''}" id="wcard-${i}" onclick="switchWorkout(${i})">
+      <div class="workout-card-label">${w.dayLabel}</div>
+      <div class="workout-card-title">${w.label}</div>
+      <div class="workout-card-focus">${w.focus}</div>
+    </div>
+  `).join('');
+
+  const lists = workouts.map((w, i) => {
+    const exItems = w.exercises.map(ex => `
+      <div class="exercise-item">
+        <div class="ex-info">
+          <div class="ex-name">${ex.name}</div>
+          ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
+        </div>
+        <div class="ex-sets">${ex.sets}</div>
+      </div>
+    `).join('');
+    return `<div id="wlist-${i}" style="display:${i===0?'block':'none'}">
+      <div class="exercise-list">${exItems}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="workout-selector">${cards}</div>
+    ${lists}
+  `;
+}
+
+function switchWorkout(i) {
+  activeWorkout = i;
+  document.querySelectorAll('.workout-card').forEach((c, j) => c.classList.toggle('active', i===j));
+  document.querySelectorAll('[id^="wlist-"]').forEach((d, j) => d.style.display = i===j?'block':'none');
+}
+
+function renderCardio() {
+  const el = document.getElementById('tab-cardio');
+  const c = data.cardio;
+  const intPhases = c.interval.phases.map(p => `
+    <div class="interval-phase">
+      <div>
+        <div class="interval-weeks">${p.weeks}</div>
+        <div class="interval-detail">${p.detail}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:var(--green);font-weight:600">${p.program}</div>
+        <div class="interval-detail">${p.duration}</div>
+      </div>
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="info-box"><strong>순서 원칙:</strong> ${c.principle}</div>
+
+    <div class="section-title">Zone 2 저강도</div>
+    <div class="cardio-block">
+      <div class="cardio-title">${c.zone2.title}</div>
+      <div class="cardio-day" style="color:var(--teal)">적용: ${c.zone2.days}</div>
+      <div class="cardio-desc">${c.zone2.description}<br>${c.zone2.heartRate}</div>
+    </div>
+
+    <div class="section-title">인터벌 런</div>
+    <div class="cardio-block">
+      <div class="cardio-title">${c.interval.title}</div>
+      <div class="cardio-day" style="color:var(--green)">적용: ${c.interval.days}</div>
+      <div class="cardio-desc" style="margin-bottom:10px">${c.interval.description}</div>
+      ${intPhases}
+    </div>
+  `;
+}
+
+function renderStretch() {
+  const el = document.getElementById('tab-stretch');
+  const s = data.stretching;
+
+  const dailyItems = s.daily.map((item, i) => `
+    <div class="stretch-item">
+      <div class="stretch-num">${i+1}</div>
+      <div class="stretch-name">${item.name}</div>
+      <div class="stretch-desc">${item.desc}</div>
+    </div>
+  `).join('');
+
+  const extraItems = s.lowerDayExtra.map(item => `
+    <div class="stretch-item">
+      <div class="stretch-name">+ ${item.name}</div>
+      <div class="stretch-desc">${item.desc}</div>
+    </div>
+  `).join('');
+
+  const timelineRows = s.timeline.map(t => `
+    <div class="timeline-row">
+      <div class="timeline-week">${t.week}</div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-goal">${t.goal}</div>
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="info-box"><strong>목표:</strong> ${s.goal}<br><strong>매일 ${s.dailyMinutes}분</strong>, 운동 후 또는 샤워 전 실시</div>
+
+    <div class="section-title">매일 필수 루틴</div>
+    <div class="stretch-list">${dailyItems}</div>
+
+    <div class="section-title">하체 날 추가 (5분)</div>
+    <div class="stretch-list">${extraItems}</div>
+
+    <div class="section-title">유연성 목표</div>
+    ${timelineRows}
+  `;
+}
+
+function renderBack() {
+  const el = document.getElementById('tab-back');
+  const b = data.backCare;
+
+  const avoidItems = b.avoid.map(item => `
+    <div class="back-item">
+      <div class="level-badge level-${item.level}">${item.level}</div>
+      <div>
+        <div class="back-name">${item.name}</div>
+        <div class="back-replace">${item.replace}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const flagItems = b.redFlags.map(f => `
+    <div class="red-flag-item">
+      <div class="red-flag-dot"></div>
+      <div>${f}</div>
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="section-title">대체 동작 가이드</div>
+    <div class="stretch-list">${avoidItems}</div>
+
+    <div class="section-title">즉시 중단 신호</div>
+    <div class="stretch-list" style="background:rgba(255,107,74,0.05);border:0.5px solid rgba(255,107,74,0.2)">${flagItems}</div>
+
+    <div class="section-title">핵심 팁</div>
+    <div class="info-box">${b.tip}</div>
+  `;
+}
+
+init();
+</script>
+</body>
+</html>
