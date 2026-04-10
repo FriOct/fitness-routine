@@ -42,13 +42,16 @@ body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-s
 .hero-sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
 
 /* 주간 미니 캘린더 */
-.week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0 18px 20px; }
-.wday { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 0 18px 20px; }
+.wday { display: flex; flex-direction: column; align-items: center; gap: 4px; background: transparent; border: 0; cursor: pointer; }
 .wday-label { font-size: 10px; color: var(--muted); }
-.wday-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--muted); background: var(--s1); }
+.wday-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--muted); background: var(--s1); }
 .wday-dot.today { background: var(--blue); color: #fff; }
 .wday-dot.workout { background: var(--s2); color: var(--text); }
 .wday-dot.rest { background: var(--s1); color: var(--hint); }
+.wday-date { font-size: 10px; color: var(--hint); }
+.wday.active .wday-label,
+.wday.active .wday-date { color: var(--text); }
 
 /* 섹션 */
 .section { padding: 0 18px; margin-bottom: 24px; }
@@ -84,7 +87,8 @@ body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-s
 .ex-name { font-size: 13px; font-weight: 500; }
 .ex-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .ex-right { text-align: right; flex-shrink: 0; }
-.ex-sets { font-size: 12px; color: var(--blue); font-weight: 500; }
+.ex-target { font-size: 12px; color: var(--blue); font-weight: 500; margin-bottom: 4px; }
+.ex-sets { font-size: 12px; color: var(--blue); font-weight: 500; display: flex; flex-wrap: wrap; justify-content: flex-end; }
 .ex-rest { font-size: 11px; color: var(--hint); margin-top: 2px; }
 .set-pill { display:inline-flex; align-items:center; justify-content:center;
   min-width:36px; height:28px; border-radius:99px; border:0.5px solid var(--border);
@@ -141,24 +145,12 @@ body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-s
 .c25k-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
 .c25k-pill { padding: 5px 12px; border-radius: 99px; border: 0.5px solid var(--border); font-size: 12px; font-weight: 500; color: var(--muted); background: var(--s1); cursor: pointer; transition: all 0.15s; }
 .c25k-pill.active { background: var(--green-dim); color: var(--green); border-color: rgba(74,222,128,0.3); }
-.timer-bar { position:fixed; bottom:0; left:0; right:0; background:var(--s2);
-  border-top:0.5px solid var(--border); padding:14px 18px; display:none;
-  z-index:100; cursor:pointer; gap:12px; align-items:center; }
-.timer-bar.active { display:flex; }
-.timer-progress { flex:1; height:4px; background:var(--s3); border-radius:99px; overflow:hidden; }
-.timer-progress-fill { height:100%; background:var(--blue); border-radius:99px; width:100%; }
-
 .divider { height: 0.5px; background: var(--border); margin: 0 18px 20px; }
 </style>
 </head>
 <body>
 
 <div id="app"><div class="loading">루틴 불러오는 중...</div></div>
-<div id="timer-bar" class="timer-bar" onclick="dismissTimer()">
-  <span id="timer-label">휴식 중</span>
-  <div class="timer-progress"><div id="timer-fill" class="timer-progress-fill"></div></div>
-  <span id="timer-countdown"></span>
-</div>
 
 <script src="routine.js"></script>
 <script src="schedule.js"></script>
@@ -171,9 +163,7 @@ let routine = null;
 let soreness = null;
 let c25kWeek = 1;
 let c25kDay  = 1;
-let timerInterval = null;
-let timerTotal = 0;
-let timerRemain = 0;
+let selectedDate = new Date();
 
 function init() {
   routine = ROUTINE_DATA;
@@ -182,9 +172,22 @@ function init() {
 
 function todayKey() { return DAY_KEYS[new Date().getDay()]; }
 
-function formatDate() {
-  const d = new Date();
+function selectedDayKey() { return DAY_KEYS[selectedDate.getDay()]; }
+
+function formatDate(date = selectedDate) {
+  const d = date;
   return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${DAY_KO[d.getDay()]}요일`;
+}
+
+function getWeekDates(baseDate = selectedDate) {
+  const start = new Date(baseDate);
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - start.getDay());
+  return DAY_KEYS.map((_, idx) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + idx);
+    return d;
+  });
 }
 
 function fmtSec(s) {
@@ -194,7 +197,7 @@ function fmtSec(s) {
 }
 
 function render() {
-  const key = todayKey();
+  const key = selectedDayKey();
   const sched = routine.weekSchedule[key];
   const isRest = sched.type === 'rest';
 
@@ -202,7 +205,7 @@ function render() {
 
   // 헤더
   html += `<div class="hero">
-    <div class="hero-date">${formatDate()}</div>
+    <div class="hero-date">${formatDate(selectedDate)}</div>
     <div class="hero-title">${isRest ? '휴식일' : sched.label}</div>
     <div class="hero-sub">${isRest ? '몸을 회복하는 것도 훈련이에요' : '오늘 루틴을 모두 따라해봐요'}</div>
   </div>`;
@@ -221,14 +224,20 @@ function render() {
 }
 
 function renderWeekStrip(todayKey) {
+  const weekDates = getWeekDates();
+  const actualToday = new Date();
+  actualToday.setHours(0, 0, 0, 0);
   const days = DAY_KEYS.map((k, i) => {
     const sched = routine.weekSchedule[k];
-    const isToday = k === todayKey;
-    const cls = isToday ? 'today' : (sched.type === 'workout' ? 'workout' : 'rest');
-    return `<div class="wday">
+    const isSelected = k === todayKey;
+    const dayDate = weekDates[i];
+    const isActualToday = dayDate.toDateString() === actualToday.toDateString();
+    const cls = isActualToday ? 'today' : (sched.type === 'workout' ? 'workout' : 'rest');
+    return `<button class="wday${isSelected ? ' active' : ''}" onclick="selectDay(${i})">
       <div class="wday-label">${DAY_KO[i]}</div>
       <div class="wday-dot ${cls}">${DAY_KO[i]}</div>
-    </div>`;
+      <div class="wday-date">${dayDate.getDate()}</div>
+    </button>`;
   }).join('');
   return `<div class="week-strip">${days}</div>`;
 }
@@ -278,12 +287,11 @@ function renderWorkoutDay(key, sched) {
 function renderWeightSection(workout) {
   const exercises = workout.exercises.map((ex, exerciseIndex) => {
     const setCount = Number(/^(\d+)세트/.exec(ex.sets)?.[1] ?? 3);
-    const restSecs = Number(/(\d+)/.exec(ex.rest)?.[1] ?? 60);
-    const exId = exerciseIndex;
+    const exId = `${workout.id}-${exerciseIndex}`;
     const pills = Array.from({ length: setCount }, (_, idx) => {
       const setNum = idx + 1;
       const doneClass = setsDone[exId]?.has(setNum) ? ' set-pill-done' : '';
-      return `<button class="set-pill${doneClass}" data-ex-id="${exId}" data-set-num="${setNum}" onclick="tapSet(${exId}, ${setNum}, ${restSecs})">${setNum}</button>`;
+      return `<button class="set-pill${doneClass}" data-ex-id="${exId}" data-set-num="${setNum}" onclick="tapSet('${exId}', ${setNum})">${setNum}</button>`;
     }).join('');
 
     return `
@@ -293,6 +301,7 @@ function renderWeightSection(workout) {
         ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
       </div>
       <div class="ex-right">
+        <div class="ex-target">${ex.sets}</div>
         <div class="ex-sets">${pills}</div>
         <div class="ex-rest">휴식 ${ex.rest}</div>
       </div>
@@ -439,7 +448,7 @@ function setSoreness(level) {
   });
 
   const alert = document.getElementById('soreness-alert');
-  const key = todayKey();
+  const key = selectedDayKey();
   const sched = routine.weekSchedule[key];
   const rules = routine.cardioRules['soreness_'+level][sched.cardio];
 
@@ -494,7 +503,14 @@ function changeC25KWeek(w) {
   nav.innerHTML = renderC25KWeekPills(w);
 }
 
-function tapSet(exId, setNum, restSecs) {
+function selectDay(dayIndex) {
+  const weekDates = getWeekDates();
+  selectedDate = weekDates[dayIndex];
+  soreness = null;
+  render();
+}
+
+function tapSet(exId, setNum) {
   if (setsDone[exId]?.has(setNum)) {
     setsDone[exId].delete(setNum);
     updateSetPill(exId, setNum, false);
@@ -504,51 +520,12 @@ function tapSet(exId, setNum, restSecs) {
   setsDone[exId] ??= new Set();
   setsDone[exId].add(setNum);
   updateSetPill(exId, setNum, true);
-  startTimer(restSecs);
 }
 
 function updateSetPill(exId, setNum, isDone) {
   const pill = document.querySelector(`[data-ex-id="${exId}"][data-set-num="${setNum}"]`);
   if (!pill) return;
   pill.classList.toggle('set-pill-done', isDone);
-}
-
-function startTimer(secs) {
-  clearInterval(timerInterval);
-  timerTotal = timerRemain = secs;
-  const bar = document.getElementById('timer-bar');
-  bar.classList.add('active');
-  updateTimerUI();
-  timerInterval = setInterval(() => {
-    timerRemain--;
-    if (timerRemain <= 0) { timerDone(); return; }
-    updateTimerUI();
-  }, 1000);
-}
-
-function updateTimerUI() {
-  document.getElementById('timer-countdown').textContent = timerRemain + '초';
-  const pct = (timerRemain / timerTotal) * 100;
-  document.getElementById('timer-fill').style.width = pct + '%';
-}
-
-function timerDone() {
-  clearInterval(timerInterval);
-  document.getElementById('timer-bar').classList.remove('active');
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    osc.connect(ctx.destination);
-    osc.frequency.value = 880;
-    osc.start();
-    osc.stop(ctx.currentTime + 0.15);
-  } catch(e) {}
-  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-}
-
-function dismissTimer() {
-  clearInterval(timerInterval);
-  document.getElementById('timer-bar').classList.remove('active');
 }
 
 function bindEvents() {}
