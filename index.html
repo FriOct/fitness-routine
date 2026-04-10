@@ -160,6 +160,7 @@ body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-s
   <span id="timer-countdown"></span>
 </div>
 
+<script src="routine.js"></script>
 <script src="schedule.js"></script>
 <script>
 const DAY_KEYS = ['sun','mon','tue','wed','thu','fri','sat'];
@@ -174,15 +175,9 @@ let timerInterval = null;
 let timerTotal = 0;
 let timerRemain = 0;
 
-async function init() {
-  try {
-    const r = await fetch('routine.json');
-    routine = await r.json();
-    render();
-  } catch(e) {
-    document.getElementById('app').innerHTML =
-      `<div style="padding:24px;color:#f87171;font-size:13px">routine.json 로드 실패: ${e.message}</div>`;
-  }
+function init() {
+  routine = ROUTINE_DATA;
+  render();
 }
 
 function todayKey() { return DAY_KEYS[new Date().getDay()]; }

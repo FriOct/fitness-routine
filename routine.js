@@ -1,0 +1,162 @@
+const ROUTINE_DATA = {
+  "meta": {
+    "title": "12주 피트니스 루틴",
+    "subtitle": "웨이트 + 유산소 + 스트레칭",
+    "startDate": "2026-04-14",
+    "c25kDays": ["mon", "thu"],
+    "progressionRule": "모든 세트에서 rep 범위 최대치 달성 시 다음 세션에 2.5kg 증량"
+  },
+
+  "weekSchedule": {
+    "mon": { "type": "workout", "workout": "upper-a", "cardio": "interval", "label": "상체 A + 인터벌" },
+    "tue": { "type": "workout", "workout": "lower-a", "cardio": "zone2",    "label": "하체 A + Zone2" },
+    "wed": { "type": "rest",    "label": "휴식 + 스트레칭" },
+    "thu": { "type": "workout", "workout": "upper-b", "cardio": "interval", "label": "상체 B + 인터벌" },
+    "fri": { "type": "workout", "workout": "lower-b", "cardio": "zone2",    "label": "하체 B + Zone2" },
+    "sat": { "type": "rest",    "label": "휴식 + 스트레칭" },
+    "sun": { "type": "rest",    "label": "완전 휴식" }
+  },
+
+  "cardioRules": {
+    "soreness_none": {
+      "interval": { "intensity": "normal", "note": "" },
+      "zone2":     { "intensity": "normal", "note": "" }
+    },
+    "soreness_mild": {
+      "interval": { "intensity": "reduced", "note": "가벼운 근육통 있음 → 인터벌 강도 70%로 줄여서 진행" },
+      "zone2":     { "intensity": "normal",  "note": "가벼운 근육통 있음 → Zone2 그대로 진행 (오히려 회복에 도움)" }
+    },
+    "soreness_severe": {
+      "interval": { "intensity": "skip",    "note": "심한 근육통 → 인터벌 건너뛰고 Zone2 20분으로 대체" },
+      "zone2":     { "intensity": "skip",    "note": "심한 근육통 → 스트레칭만 하고 유산소 생략" }
+    }
+  },
+
+  "workouts": [
+    {
+      "id": "upper-a",
+      "label": "상체 A",
+      "dayLabel": "월요일",
+      "focus": "밀기 (가슴·어깨·삼두)",
+      "warmup": "밴드 숄더 서클 20회 + 암 스윙 20회 + 푸시업 10회",
+      "exercises": [
+        { "name": "인클라인 덤벨 프레스",       "note": "30~45도 경사 · 어깨 보호 · 2-3회 남기기 · 내릴 때 3초",           "sets": "4세트 × 10~12회", "rest": "90초" },
+        { "name": "케이블 체스트 플라이",        "note": "서서 시행 · 허리 부담↓ · 2-3회 남기기",             "sets": "3세트 × 12~15회", "rest": "60초" },
+        { "name": "덤벨 숄더 프레스 (시티드)",  "note": "등받이에 기대어 허리 지지 · 2-3회 남기기 · 내릴 때 3초",           "sets": "3세트 × 10~12회", "rest": "90초" },
+        { "name": "래터럴 레이즈",               "note": "팔꿈치 살짝 구부려서 · 2-3회 남기기",               "sets": "3세트 × 15회",    "rest": "60초" },
+        { "name": "케이블 트라이셉스 푸시다운",  "note": "오버헤드 익스텐션 대신 · 허리 안전 · 2-3회 남기기", "sets": "3세트 × 12~15회", "rest": "60초" }
+      ]
+    },
+    {
+      "id": "upper-b",
+      "label": "상체 B",
+      "dayLabel": "목요일",
+      "focus": "당기기 (등·이두)",
+      "warmup": "밴드 풀 어파트 15회 + 페이스 풀 가볍게 20회 + 숄더 롤 20회",
+      "exercises": [
+        { "name": "시티드 케이블 로우",    "note": "허리 중립 필수 · 데드리프트 대신 · 2-3회 남기기 · 내릴 때 3초",   "sets": "4세트 × 10~12회", "rest": "90초" },
+        { "name": "랫 풀다운",             "note": "광배근 발달 · 풀업 준비 · 2-3회 남기기 · 내릴 때 3초",             "sets": "4세트 × 10~12회", "rest": "90초" },
+        { "name": "덤벨 원암 로우",        "note": "벤치에 무릎 지지 · 허리 안전 · 2-3회 남기기 · 내릴 때 3초",       "sets": "3세트 × 12회 (양쪽)", "rest": "60초" },
+        { "name": "페이스 풀",             "note": "후면 삼각근 · 회전근개 보호 · 2-3회 남기기",         "sets": "3세트 × 15회",    "rest": "60초" },
+        { "name": "덤벨 해머 컬",          "note": "이두 + 상완근 · 2-3회 남기기",                       "sets": "3세트 × 12회",    "rest": "60초" }
+      ]
+    },
+    {
+      "id": "lower-a",
+      "label": "하체 A",
+      "dayLabel": "화요일",
+      "focus": "쿼드 중심",
+      "warmup": "힙 서클 각 10회 + 레그 스윙 앞뒤 20회 + 맨몸 스쿼트 15회",
+      "exercises": [
+        { "name": "레그 프레스",             "note": "스쿼트 대신 · 허리 부담↓ · 2-3회 남기기 · 내릴 때 3초",           "sets": "4세트 × 10~12회", "rest": "90초" },
+        { "name": "덤벨 고블릿 스쿼트",      "note": "허리 중립 잡기 쉬움 · 재적응 최적 · 2-3회 남기기 · 내릴 때 3초", "sets": "3세트 × 12회",    "rest": "90초" },
+        { "name": "레그 익스텐션",           "note": "쿼드 고립 · 안전 · 2-3회 남기기",                   "sets": "3세트 × 15회",    "rest": "60초" },
+        { "name": "힙 어브덕션 머신",        "note": "엉덩이 외전근 · 골반 안정 · 2-3회 남기기",          "sets": "3세트 × 15회",    "rest": "60초" },
+        { "name": "카프 레이즈 (서서)",      "note": "2-3회 남기기",                                   "sets": "3세트 × 20회",    "rest": "45초" }
+      ]
+    },
+    {
+      "id": "lower-b",
+      "label": "하체 B",
+      "dayLabel": "금요일",
+      "focus": "햄스트링·둔근 중심",
+      "warmup": "글루트 브릿지 맨몸 15회 + 클램쉘 각 15회 + 레그 스윙 옆으로 20회",
+      "exercises": [
+        { "name": "루마니안 데드리프트 (RDL)", "note": "햄스트링 스트레칭 + 강화 · 허리 중립 · 2-3회 남기기 · 내릴 때 3초", "sets": "4세트 × 10회",    "rest": "90초" },
+        { "name": "힙 스러스트",               "note": "바벨 or 머신 · 둔근 최고 활성화 · 2-3회 남기기 · 내릴 때 3초",     "sets": "4세트 × 12회",    "rest": "90초" },
+        { "name": "레그 컬",                   "note": "라잉 or 시티드 · 햄스트링 고립 · 2-3회 남기기 · 내릴 때 3초",       "sets": "3세트 × 12~15회", "rest": "60초" },
+        { "name": "덤벨 리버스 런지",          "note": "무릎 부담 적은 런지 변형 · 2-3회 남기기",             "sets": "3세트 × 10회 (양쪽)", "rest": "60초" },
+        { "name": "글루트 브릿지 (맨몸)",      "note": "허리 안정화 + 마무리 · 2-3회 남기기",                 "sets": "2세트 × 20회",    "rest": "45초" }
+      ]
+    }
+  ],
+
+  "stretching": {
+    "goal": "햄스트링 단축 해소 + 골반 전방경사 교정 + 허리 중립 회복",
+    "daily": [
+      {
+        "name": "90/90 힙 스트레치",
+        "desc": "양쪽 각 60초 · 골반 내·외회전 동시 · 허리 둥글게 말지 않기",
+        "duration": "60초 × 양쪽",
+        "videoUrl": "https://www.youtube.com/watch?v=BaGXKPbpAGE"
+      },
+      {
+        "name": "수건 보조 햄스트링 스트레칭",
+        "desc": "누워서 한쪽 다리 들어 수건으로 당기기 · 무릎 살짝 구부려도 OK",
+        "duration": "45초 × 2세트 양쪽",
+        "videoUrl": "https://www.youtube.com/watch?v=jOwDGHGMAlg"
+      },
+      {
+        "name": "캣-카우",
+        "desc": "천천히 호흡과 함께 · 허리 가동성 회복",
+        "duration": "10회 × 2세트",
+        "videoUrl": "https://www.youtube.com/watch?v=kqnua4rHVVA"
+      },
+      {
+        "name": "데드버그",
+        "desc": "코어 안정화 · 허리가 바닥에서 떨어지지 않게",
+        "duration": "10회 × 2세트",
+        "videoUrl": "https://www.youtube.com/watch?v=4XLEnwUr1d8"
+      },
+      {
+        "name": "차일드 포즈",
+        "desc": "허리 이완 · 마무리",
+        "duration": "60초",
+        "videoUrl": "https://www.youtube.com/watch?v=qn5OQMO3RMI"
+      }
+    ],
+    "lowerDayExtra": [
+      {
+        "name": "코치 스트레치 (런지 + 흉추 회전)",
+        "desc": "고관절 굴곡근 + 흉추 동시 스트레칭",
+        "duration": "45초 × 양쪽",
+        "videoUrl": "https://www.youtube.com/watch?v=GHSSMfDPR1A"
+      },
+      {
+        "name": "시티드 포워드 폴드",
+        "desc": "허리 먼저 펴고 → 천천히 숙이기",
+        "duration": "60초",
+        "videoUrl": "https://www.youtube.com/watch?v=Tnh9rFMVmJc"
+      }
+    ],
+    "timeline": [
+      { "week": "4주 후", "goal": "정강이 → 발목" },
+      { "week": "8주 후", "goal": "발목 → 발등" },
+      { "week": "12주 후", "goal": "발끝 도달" }
+    ]
+  },
+
+  "backCare": {
+    "avoid": [
+      { "name": "바벨 스쿼트",           "replace": "고블릿 스쿼트 or 레그프레스로 대체", "level": "주의" },
+      { "name": "컨벤셔널 데드리프트",   "replace": "RDL로 대체",                         "level": "주의" },
+      { "name": "굿모닝 운동",           "replace": "허리 굴곡 과부하",                   "level": "금지" },
+      { "name": "풀 싯업",              "replace": "플랭크·데드버그로 대체",              "level": "금지" }
+    ],
+    "redFlags": [
+      "다리 저림·당김 느낌 → 신경 압박 가능성, 전문의 상담",
+      "운동 중 예리한 찌르는 통증 → 즉시 중단",
+      "다음 날 허리 통증이 이전보다 심해짐 → 볼륨·무게 줄이기"
+    ]
+  }
+};
