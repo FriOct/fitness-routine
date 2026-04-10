@@ -146,6 +146,23 @@
     ]
   },
 
+  "restActivities": {
+    "wed": [
+      { "name": "폼롤러 등·둔근·종아리", "duration": "각 45초", "note": "뭉친 부위 천천히 압박" },
+      { "name": "전신 스트레칭 루틴", "duration": "15분", "note": "아래 스트레칭 섹션 전체 수행" }
+    ],
+    "sat": [
+      { "name": "가벼운 산책 or 자전거", "duration": "20~30분", "note": "심박 100~110 bpm 이하 · Zone 1" },
+      { "name": "전신 스트레칭 루틴", "duration": "15분", "note": "아래 스트레칭 섹션 전체 수행" }
+    ],
+    "sun": [
+      { "name": "가벼운 산책", "duration": "15~20분", "note": "속도 무관 · 햇빛 쬐며 기분 전환" },
+      { "name": "90/90 힙 스트레치", "duration": "60초 × 양쪽", "note": "골반 가동성 유지" },
+      { "name": "캣-카우", "duration": "10회 × 2세트", "note": "허리 이완" },
+      { "name": "차일드 포즈", "duration": "60초", "note": "마무리 이완" }
+    ]
+  },
+
   "backCare": {
     "avoid": [
       { "name": "바벨 스쿼트",           "replace": "고블릿 스쿼트 or 레그프레스로 대체", "level": "주의" },
