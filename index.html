@@ -86,6 +86,12 @@ body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-s
 .ex-right { text-align: right; flex-shrink: 0; }
 .ex-sets { font-size: 12px; color: var(--blue); font-weight: 500; }
 .ex-rest { font-size: 11px; color: var(--hint); margin-top: 2px; }
+.set-pill { display:inline-flex; align-items:center; justify-content:center;
+  min-width:36px; height:28px; border-radius:99px; border:0.5px solid var(--border);
+  background:var(--s2); color:var(--muted); font-size:11px; font-weight:500;
+  cursor:pointer; margin:2px; padding:0 8px; transition:all 0.15s; }
+.set-pill-done { background:var(--green-dim); color:var(--green);
+  border-color:rgba(74,222,128,0.3); }
 
 /* 배지 */
 .badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
@@ -135,6 +141,12 @@ body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-s
 .c25k-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
 .c25k-pill { padding: 5px 12px; border-radius: 99px; border: 0.5px solid var(--border); font-size: 12px; font-weight: 500; color: var(--muted); background: var(--s1); cursor: pointer; transition: all 0.15s; }
 .c25k-pill.active { background: var(--green-dim); color: var(--green); border-color: rgba(74,222,128,0.3); }
+.timer-bar { position:fixed; bottom:0; left:0; right:0; background:var(--s2);
+  border-top:0.5px solid var(--border); padding:14px 18px; display:none;
+  z-index:100; cursor:pointer; gap:12px; align-items:center; }
+.timer-bar.active { display:flex; }
+.timer-progress { flex:1; height:4px; background:var(--s3); border-radius:99px; overflow:hidden; }
+.timer-progress-fill { height:100%; background:var(--blue); border-radius:99px; width:100%; }
 
 .divider { height: 0.5px; background: var(--border); margin: 0 18px 20px; }
 </style>
@@ -142,16 +154,25 @@ body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-s
 <body>
 
 <div id="app"><div class="loading">루틴 불러오는 중...</div></div>
+<div id="timer-bar" class="timer-bar" onclick="dismissTimer()">
+  <span id="timer-label">휴식 중</span>
+  <div class="timer-progress"><div id="timer-fill" class="timer-progress-fill"></div></div>
+  <span id="timer-countdown"></span>
+</div>
 
 <script src="schedule.js"></script>
 <script>
 const DAY_KEYS = ['sun','mon','tue','wed','thu','fri','sat'];
 const DAY_KO   = ['일','월','화','수','목','금','토'];
+const setsDone = {}; // { exId: Set<setNum> }
 
 let routine = null;
 let soreness = null;
 let c25kWeek = 1;
 let c25kDay  = 1;
+let timerInterval = null;
+let timerTotal = 0;
+let timerRemain = 0;
 
 async function init() {
   try {
@@ -260,17 +281,28 @@ function renderWorkoutDay(key, sched) {
 }
 
 function renderWeightSection(workout) {
-  const exercises = workout.exercises.map(ex => `
+  const exercises = workout.exercises.map((ex, exerciseIndex) => {
+    const setCount = Number(/^(\d+)세트/.exec(ex.sets)?.[1] ?? 3);
+    const restSecs = Number(/(\d+)/.exec(ex.rest)?.[1] ?? 60);
+    const exId = exerciseIndex;
+    const pills = Array.from({ length: setCount }, (_, idx) => {
+      const setNum = idx + 1;
+      const doneClass = setsDone[exId]?.has(setNum) ? ' set-pill-done' : '';
+      return `<button class="set-pill${doneClass}" data-ex-id="${exId}" data-set-num="${setNum}" onclick="tapSet(${exId}, ${setNum}, ${restSecs})">${setNum}</button>`;
+    }).join('');
+
+    return `
     <div class="exercise-item">
       <div class="ex-left">
         <div class="ex-name">${ex.name}</div>
         ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
       </div>
       <div class="ex-right">
-        <div class="ex-sets">${ex.sets}</div>
+        <div class="ex-sets">${pills}</div>
         <div class="ex-rest">휴식 ${ex.rest}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   return `<div class="section">
     <div class="section-label">웨이트 트레이닝</div>
@@ -296,8 +328,8 @@ function renderCardioSection(sched, key) {
   const inferredWeek = Math.min(9, Math.max(1, Math.floor(diffDays / 7) + 1));
   c25kWeek = inferredWeek;
 
-  // 이 주의 C25K 날짜 (월/수/금 → day 1/2/3)
-  const c25kDayMap = { mon: 1, wed: 2, fri: 3 };
+  // 이 주의 C25K 날짜 (월/목 인터벌 기준)
+  const c25kDayMap = { mon: 1, thu: 2 };
   c25kDay = c25kDayMap[key] || 1;
 
   const cardioLabel = isInterval ? '인터벌 런 (C25K 트레드밀)' : 'Zone 2 유산소';
@@ -465,6 +497,63 @@ function changeC25KWeek(w) {
     </div>`).join('');
 
   nav.innerHTML = renderC25KWeekPills(w);
+}
+
+function tapSet(exId, setNum, restSecs) {
+  if (setsDone[exId]?.has(setNum)) {
+    setsDone[exId].delete(setNum);
+    updateSetPill(exId, setNum, false);
+    return;
+  }
+
+  setsDone[exId] ??= new Set();
+  setsDone[exId].add(setNum);
+  updateSetPill(exId, setNum, true);
+  startTimer(restSecs);
+}
+
+function updateSetPill(exId, setNum, isDone) {
+  const pill = document.querySelector(`[data-ex-id="${exId}"][data-set-num="${setNum}"]`);
+  if (!pill) return;
+  pill.classList.toggle('set-pill-done', isDone);
+}
+
+function startTimer(secs) {
+  clearInterval(timerInterval);
+  timerTotal = timerRemain = secs;
+  const bar = document.getElementById('timer-bar');
+  bar.classList.add('active');
+  updateTimerUI();
+  timerInterval = setInterval(() => {
+    timerRemain--;
+    if (timerRemain <= 0) { timerDone(); return; }
+    updateTimerUI();
+  }, 1000);
+}
+
+function updateTimerUI() {
+  document.getElementById('timer-countdown').textContent = timerRemain + '초';
+  const pct = (timerRemain / timerTotal) * 100;
+  document.getElementById('timer-fill').style.width = pct + '%';
+}
+
+function timerDone() {
+  clearInterval(timerInterval);
+  document.getElementById('timer-bar').classList.remove('active');
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    osc.connect(ctx.destination);
+    osc.frequency.value = 880;
+    osc.start();
+    osc.stop(ctx.currentTime + 0.15);
+  } catch(e) {}
+  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+}
+
+function dismissTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timer-bar').classList.remove('active');
 }
 
 function bindEvents() {}
